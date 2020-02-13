@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands
 from PIL import Image
 import requests
+import random
 
 description = None
 TOKEN = 'token'
@@ -30,7 +31,7 @@ async def bearfacts(ctx, arg):
 async def diowalk(ctx, *embed):# TODO add support for attachments
     myFiles = []
     output = []
-    x = 1
+    tag = random.randrange(10000, 30000)# generate initial tag
     try:
         # cycles through all embedded links an processes them
         for f in embed:
@@ -54,15 +55,16 @@ async def diowalk(ctx, *embed):# TODO add support for attachments
             DIOMask = Image.open("diowalkMask.png").convert('L').copy().resize(im.size)
             DIO.putalpha(DIOMask)# apply mask
 
+            tag += random.randrange(10000, 30000)# generate tag from previous tags
+
             # paste dio onto feched image and save
             im.paste(DIO, (0,0), DIO)
-            im.save("output" + str(x) + ".png", "PNG")# TODO add random name so they don't comflict 
+            im.save(str(tag) + ".png", "PNG")
             
             # add file name to myFiles list to be sent to discord an to output list to be deleted later
-            myFiles.append(discord.File("output" + str(x) + ".png"))
-            output.append("output" + str(x) + ".png")
+            myFiles.append(discord.File(str(tag) + ".png"))
+            output.append(str(tag) + ".png")
             print(myFiles)# print list for de-bug
-            x += 1# increment for naming files
 
         # send files to discord
         await ctx.send(files=myFiles)
