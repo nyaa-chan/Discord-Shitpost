@@ -1,6 +1,7 @@
-# Work with Python 3.8
-# discord.py 1.3.1 
+# Python 3.8
+# discord.py: 1.3.1 
 # Author: nyaa-chan
+# Version: 1.0.1
 import os
 import discord
 from discord.ext import commands
@@ -8,7 +9,7 @@ from PIL import Image
 import requests
 
 description = None
-TOKEN = 'Njc2OTE5NTc0Njc5MjU3MTU4.XkSXdA.Xqfggkry1sG10nLYrft2wVNxPeE'
+TOKEN = 'token'
 
 bot = commands.Bot(command_prefix = '.')
 
@@ -17,17 +18,25 @@ bot = commands.Bot(command_prefix = '.')
 async def test(ctx, arg):
     await ctx.send(arg)
 
+# TODO fix .help command
+
+@bot.command()
+async def bearfacts(ctx, arg):
+    # TODO
+    pass
+
 
 @bot.command()# retrieves image from imbedded link and places DIO on it xd
-async def diowalk(ctx, *embed):
+async def diowalk(ctx, *embed):# TODO add support for attachments
     myFiles = []
     output = []
     x = 1
     try:
-
+        # cycles through all embedded links an processes them
         for f in embed:
             print(f)
             
+            # fetch file from url
             try:
                 url = f
                 file = requests.get(url, stream = True)
@@ -36,27 +45,36 @@ async def diowalk(ctx, *embed):
                 await ctx.send('"'+ f + '"' + " isn't a valid url")
                 continue
 
+            #open file with PIL
             im = Image.open(file.raw).copy()
 
+            # open dio image an mask and resize it to feched image
+            # TODO put DIO on a diet
             DIO = Image.open("diowalk.png").copy().resize(im.size)
             DIOMask = Image.open("diowalkMask.png").convert('L').copy().resize(im.size)
-            DIO.putalpha(DIOMask)
+            DIO.putalpha(DIOMask)# apply mask
 
+            # paste dio onto feched image and save
             im.paste(DIO, (0,0), DIO)
-            im.save("output" + str(x) + ".png", "PNG")
+            im.save("output" + str(x) + ".png", "PNG")# TODO add random name so they don't comflict 
+            
+            # add file name to myFiles list to be sent to discord an to output list to be deleted later
             myFiles.append(discord.File("output" + str(x) + ".png"))
             output.append("output" + str(x) + ".png")
-            print(myFiles)
-            x += 1
+            print(myFiles)# print list for de-bug
+            x += 1# increment for naming files
 
+        # send files to discord
         await ctx.send(files=myFiles)
         await ctx.send("HE APPROACHES")
 
+        # delete output images
         for i in output:
             os.remove(i)
             print("reomved: " + i)
 
     except discord.errors.HTTPException:
+        # catches exception from not embeding an image
         await ctx.send("I need an image idiot")
 
 @bot.command()# logs the bot off for updates to code
