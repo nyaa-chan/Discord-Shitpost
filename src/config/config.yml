@@ -1,0 +1,7 @@
+command_config:
+  command_prefix: "."
+  help_command: <default-help-command>
+  self_bot: False
+
+API_config:
+  token: "token"

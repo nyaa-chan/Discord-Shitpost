@@ -8,11 +8,24 @@ from discord.ext import commands
 from PIL import Image
 import requests
 import random
+import yaml
+import ImgProcess
+
+
+os.getcwd()
+print(os.path.exists('config'))
+os.chdir('config')
+print(os.getcwd())
+
+
+with open("config.ylm") as config:
+    cfg = yaml.load(config)
+
 
 description = None
-TOKEN = 'token'
+#TOKEN = cfg["API_config"][token]
 
-bot = commands.Bot(command_prefix = '.')
+bot = commands.Bot(command_prefix = '.',)
 
 # de-bugging command
 @bot.command()
@@ -93,4 +106,4 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-bot.run(TOKEN)
+bot.run()
