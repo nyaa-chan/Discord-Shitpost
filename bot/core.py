@@ -12,18 +12,12 @@ import yaml
 import ImgProcess
 
 
-os.getcwd()
-print(os.path.exists('config'))
-os.chdir('config')
-print(os.getcwd())
-
-
-with open("config.ylm") as config:
-    cfg = yaml.load(config)
+with open("..\\config\\config.yml") as config:
+    cfg = yaml.load(config, Loader = yaml.SafeLoader)
 
 
 description = None
-#TOKEN = cfg["API_config"][token]
+TOKEN = cfg["API_config"]["token"]
 
 bot = commands.Bot(command_prefix = '.',)
 
@@ -106,4 +100,4 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-bot.run()
+bot.run(TOKEN)
