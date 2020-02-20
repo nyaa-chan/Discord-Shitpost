@@ -5,11 +5,9 @@
 import os
 import discord
 from discord.ext import commands
-from PIL import Image
-import requests
 import random
 import yaml
-import ImgProcess
+import img
 
 
 with open("..\\config\\config.yml") as config:
@@ -19,7 +17,9 @@ with open("..\\config\\config.yml") as config:
 description = None
 TOKEN = cfg["API_config"]["token"]
 
-bot = commands.Bot(command_prefix = '.',)
+bot = commands.Bot(
+    command_prefix = cfg["command_config"]["command_prefix"],  
+    self_bot = cfg["command_config"]["self_bot"])
 
 # de-bugging command
 @bot.command()
@@ -43,34 +43,31 @@ async def diowalk(ctx, *embed):# TODO add support for attachments
         # cycles through all embedded links an processes them
         for f in embed:
             print(f)
-            
+  
             # fetch file from url
             try:
-                url = f
-                file = requests.get(url, stream = True)
-                file.raw.decode_content = True
+                file = img.Fech(f)
             except requests.exceptions.MissingSchema:
                 await ctx.send('"'+ f + '"' + " isn't a valid url")
                 continue
 
-            #open file with PIL
-            im = Image.open(file.raw).copy()
+            print(file)
 
-            # open dio image an mask and resize it to feched image
+            
+            overlay = "..\\assets\\mask\\diowalk.png"
+            mask = "..\\assets\\mask\\diowalkMask.png"
+            im = img.Mask(overlay, mask, file)
+
             # TODO put DIO on a diet
-            DIO = Image.open("diowalk.png").copy().resize(im.size)
-            DIOMask = Image.open("diowalkMask.png").convert('L').copy().resize(im.size)
-            DIO.putalpha(DIOMask)# apply mask
 
             tag += random.randrange(10000, 30000)# generate tag from previous tags
 
-            # paste dio onto feched image and save
-            im.paste(DIO, (0,0), DIO)
-            im.save(str(tag) + ".png", "PNG")
+            fl_name = "..\\assets\\" + str(tag) + ".png"
+            im.save(fl_name, "PNG")
             
             # add file name to myFiles list to be sent to discord an to output list to be deleted later
-            myFiles.append(discord.File(str(tag) + ".png"))
-            output.append(str(tag) + ".png")
+            myFiles.append(discord.File(fl_name))
+            output.append(fl_name)
             print(myFiles)# print list for de-bug
 
         # send files to discord
