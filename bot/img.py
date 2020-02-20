@@ -2,7 +2,6 @@ import requests
 from PIL import Image
 
 def Fech(embed):
-	
 	file = requests.get(embed, stream = True)
 	file.raw.decode_content = True
 	

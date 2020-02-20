@@ -2,6 +2,7 @@ command_config:
   command_prefix: "."
   help_command: "<default-help-command>"
   self_bot: False
+
   
 #  template:
 #    name:
@@ -12,6 +13,5 @@ command_config:
 #    enabled:
 #    
 
-
 API_config:
-  token: "token"
+  token: "Njc2OTE5NTc0Njc5MjU3MTU4.Xk3Atg.z3HeSqyp8DyEioJeiclkEruVfTk"
