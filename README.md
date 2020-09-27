@@ -16,18 +16,11 @@ Now clone the repository and navigate to the directory with:
 
 ```sh
 git clone https://github.com/nyaa-chan/Discord-Shitpost
-cd Discord-Shitpost
 ```
 
-Then install the required libraries with:
+Or download the repository as a zip archive and extract on your computer.
 
-```sh
-pip install -r requirements.txt
-```
-
-Navigate to the config file and open it with your favored text editor, then paste your bot's token into the labeled line (with the quotations around the token).
-
-Now just run core.py under the bot folder and you're good to go!
+Once you have the repository on your computer simply run the start.bat file, it will install all required libraries, ask for your token, then run the bot script.
 
 ## Commands
 
