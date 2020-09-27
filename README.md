@@ -6,6 +6,8 @@ Just a really bad bot written in python, nothing to see here.
 
 This bot was originaly made to take an image that a user submits and overlays the dio walk meme template to it. I saw it in a meme somewhere but it didn't exist so I made it myself. :)
 
+If you just want this bot in your server click on this link: https://discord.com/api/oauth2/authorize?client_id=676919574679257158&permissions=52224&scope=bot
+
 ## Installation
 
 * Requires Python 3.8 or later
