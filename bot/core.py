@@ -10,16 +10,15 @@ import yaml
 import img
 
 
-with open("..\\config\\config.yml") as config:
+with open("config\\config.yml") as config:
     cfg = yaml.load(config, Loader = yaml.SafeLoader)
 
 
 description = None
-TOKEN = cfg["API_config"]["token"]
 
 bot = commands.Bot(
-    command_prefix = cfg["command_config"]["command_prefix"],  
-    self_bot = cfg["command_config"]["self_bot"])
+    command_prefix = cfg["command-config"]["command-prefix"],  
+    self_bot = cfg["command-config"]["self-bot"])
 
 # de-bugging command
 @bot.command()
@@ -92,9 +91,10 @@ async def leave(ctx):
 
 @bot.event# says when the bot is logged in
 async def on_ready():
+    print('------')
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
     print('------')
 
-bot.run(TOKEN)
+bot.run(input("Paste your API token here: "))
