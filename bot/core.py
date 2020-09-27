@@ -53,15 +53,15 @@ async def diowalk(ctx, *embed):# TODO add support for attachments
             print(file)
 
             
-            overlay = "..\\assets\\mask\\diowalk.png"
-            mask = "..\\assets\\mask\\diowalkMask.png"
+            overlay = "assets\\mask\\diowalk.png"
+            mask = "assets\\mask\\diowalkMask.png"
             im = img.Mask(overlay, mask, file)
 
             # TODO put DIO on a diet
 
             tag += random.randrange(10000, 30000)# generate tag from previous tags
 
-            fl_name = "..\\assets\\" + str(tag) + ".png"
+            fl_name = "assets\\" + str(tag) + ".png"
             im.save(fl_name, "PNG")
             
             # add file name to myFiles list to be sent to discord an to output list to be deleted later
