@@ -13,7 +13,6 @@ import img
 with open("config\\config.yml") as config:
     cfg = yaml.load(config, Loader = yaml.SafeLoader)
 
-
 description = None
 
 bot = commands.Bot(
@@ -97,4 +96,31 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-bot.run(input("Paste your API token here: "))
+# Token handeling
+if cfg["Token-config"]["storeToken"]:
+    if cfg["Token-config"]["Token"]  == None: # No saved token.
+        # Prompt for token.
+        cfg["Token-config"]["Token"] = input("Paste your API token here: ")
+
+        with open("config\\config.yml", "w") as config:
+            yaml.dump(cfg, config)
+
+        # If token invalid.
+        try:
+            bot.run(cfg["Token-config"]["Token"])
+        except:
+            cfg["Token-config"]["Token"] = None
+            with open("config\\config.yml", "w") as config:
+                yaml.dump(cfg, config)
+            print("Invalid token restart and try again")
+    else: # Token is stored.
+        # If token invalid.
+        try:
+            bot.run(cfg["Token-config"]["Token"])
+        except:
+            cfg["Token-config"]["Token"] = None
+            with open("config\\config.yml","w") as config:
+                yaml.dump(cfg, config)
+            print("Invalid token restart and try again")
+else:
+    bot.run(input("Paste your API token here: "))

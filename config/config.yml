@@ -1,14 +1,7 @@
+Token-config:
+  Token: 
+  storeToken: true
 command-config:
-  command-prefix: "."
-  help-command: "<default-help-command>"
-  self-bot: False
-
-  
-#  template:
-#    name:
-#    help_long: 
-#    help_brief:
-#    help_usage:
-#    aliases:
-#    enabled:
-#    
+  command-prefix: .
+  help-command: <default-help-command>
+  self-bot: false
