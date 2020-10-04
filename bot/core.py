@@ -1,92 +1,98 @@
 # Python 3.8
-# discord.py: 1.3.1 
+# discord.py: 1.5.0
 # Author: nyaa-chan
-# Version: 1.0.1
+# Version: 1.0.2
 import os
 import discord
 from discord.ext import commands
-import random
 import yaml
 import img
+import random
+import requests
 
-
+# load config files:
 with open("config\\config.yml") as config:
     cfg = yaml.load(config, Loader = yaml.SafeLoader)
 
-description = None
+with open("config\\CommandConfig.yml") as config:
+    command_config = yaml.load(config, Loader = yaml.SafeLoader)
 
+# instalize bot with info from the config:
 bot = commands.Bot(
-    command_prefix = cfg["command-config"]["command-prefix"],  
-    self_bot = cfg["command-config"]["self-bot"])
+    command_prefix = cfg["bot-config"]["command-prefix"],  
+    self_bot = cfg["bot-config"]["self-bot"],
+)
 
-# de-bugging command
+# Bot commands:
+
+# diowalk command:
 @bot.command()
-async def test(ctx, arg):
-    await ctx.send(arg)
+async def diowalk(ctx):
+    print("DEBUG: diowalk command invoked")
+    return
 
-# TODO fix .help command
+@bot.listen('on_message')  # retrieves image from imbedded link and places DIO on it xd
+async def diowalk_(message):
+    if message.content.startswith(cfg["bot-config"]["command-prefix"] + 'diowalk'): # Confirms that the command is being run
+        attach = message.attachments
+        #converts the contents of the message to a list and removes ".diowalk"
+        embed = list(message.content.split(' '))
+        embed.remove(str(cfg["bot-config"]["command-prefix"] + 'diowalk'))
+        
+        try:
+            for i in embed:
+                await diowalk_funct(message, i)
+            for i in attach:
+                await diowalk_funct(message, i.url)
+        except:
+            await message.channel.send("Unknown exception occcured, call Matt")
+            raise
 
-@bot.command()
-async def bearfacts(ctx, arg):
-    # TODO
-    pass
+# Functions for commands:
 
-
-@bot.command()# retrieves image from imbedded link and places DIO on it xd
-async def diowalk(ctx, *embed):# TODO add support for attachments
+# diowalk function:
+async def diowalk_funct(message, url):
+    # fetch file from url
     myFiles = []
     output = []
     tag = random.randrange(10000, 30000)# generate initial tag
+
     try:
-        # cycles through all embedded links an processes them
-        for f in embed:
-            print(f)
-  
-            # fetch file from url
-            try:
-                file = img.Fech(f)
-            except requests.exceptions.MissingSchema:
-                await ctx.send('"'+ f + '"' + " isn't a valid url")
-                continue
+        file = img.Fech(url)
+    except requests.exceptions.MissingSchema:
+        await message.channel.send('"'+ url + '"' + " isn't a valid image, if it was an attachment it has been deleted")
+        print("WARNING: " + url + " not a valid url")
+        return
 
-            print(file)
+    print("DEBUG: image at " + str(file))
+    
+    overlay = "assets\\mask\\diowalk.png"
+    mask = "assets\\mask\\diowalkMask.png"
+    im = img.Mask(overlay, mask, file)
 
-            
-            overlay = "assets\\mask\\diowalk.png"
-            mask = "assets\\mask\\diowalkMask.png"
-            im = img.Mask(overlay, mask, file)
+    # TODO put DIO on a diet
 
-            # TODO put DIO on a diet
+    tag += random.randrange(10000, 30000)# generate tag from previous tags
 
-            tag += random.randrange(10000, 30000)# generate tag from previous tags
+    fl_name = "assets\\" + str(tag) + ".png"
+    im.save(fl_name, "PNG")
+    
+    # add file name to myFiles list to be sent to discord an to output list to be deleted later
+    myFiles.append(discord.File(fl_name))
+    output.append(fl_name)
+    print("DEBUG: " + str(myFiles))# print list for de-bug
 
-            fl_name = "assets\\" + str(tag) + ".png"
-            im.save(fl_name, "PNG")
-            
-            # add file name to myFiles list to be sent to discord an to output list to be deleted later
-            myFiles.append(discord.File(fl_name))
-            output.append(fl_name)
-            print(myFiles)# print list for de-bug
+    # send files to discord
+    await message.channel.send(files=myFiles)
+    # await message.channel.send("HE APPROACHES")
 
-        # send files to discord
-        await ctx.send(files=myFiles)
-        await ctx.send("HE APPROACHES")
+    # delete output images
+    for i in output:
+        os.remove(i)
+        print("DEBUG: reomved " + i)
 
-        # delete output images
-        for i in output:
-            os.remove(i)
-            print("reomved: " + i)
 
-    except discord.errors.HTTPException:
-        # catches exception from not embeding an image
-        await ctx.send("I need an image idiot")
-
-@bot.command()# logs the bot off for updates to code
-async def leave(ctx):
-    msg = "later idiots"
-    await ctx.send(msg)
-
-    await bot.logout()
+# Bot login notification:
 
 @bot.event# says when the bot is logged in
 async def on_ready():
